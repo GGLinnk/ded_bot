@@ -2,7 +2,7 @@
   "name": "ded_bot",
   "version": "0.0.0",
   "description": "Scream & Death bot for EntropyZeroOfficial Twitch.tv channel",
-  "main": "index.js",
+  "main": "app.js",
   "repository": "github:GGLinnk/DED_BOT",
   "keywords": [
     "bot",
