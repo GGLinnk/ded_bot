@@ -19,5 +19,8 @@
     "url": "https://github.com/GGLinnk/ded_bot/issues",
     "email": "gglinnk@protonmail.com"
   },
-  "homepage": "https://github.com/GGLinnk/ded_bot#readme"
+  "homepage": "https://github.com/GGLinnk/ded_bot#readme",
+  "dependencies": {
+    "@twurple/auth": "^5.0.4"
+  }
 }
