@@ -1,0 +1,13 @@
+# Files to ignore
+
+## Folders
+node_modules/
+
+## Files
+.env
+
+# Exclusions
+
+## Folders
+
+## Files
