@@ -1,14 +1,9 @@
-# Files to ignore
+# Files and folders to ignore
 
 ## Folders
 node_modules/
+build/
 
 ## Files
 .env
 ded_bot-*
-
-# Exclusions
-
-## Folders
-
-## Files
