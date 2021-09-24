@@ -7,7 +7,7 @@
   "repository": "github:GGLinnk/DED_BOT",
   "scripts": {
     "start": "node app.js",
-    "build": "pkg ."
+    "build": "pkg . --out-path ./build/"
   },
   "keywords": [
     "bot",
