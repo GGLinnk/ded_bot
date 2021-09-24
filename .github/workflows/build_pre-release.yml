@@ -1,9 +1,10 @@
-name: Build and Release
+name: Build and Pre-Release
 
 on:
-  create:
-    tags:
-      - v*
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -74,13 +75,13 @@ jobs:
       - name: Create archive
         uses: montudor/action-zip@v1
         with:
-          args: zip -j ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}.zip ./build/${{ steps.name.outputs.prop }}-win.exe LICENSE.md README.md
+          args: zip -j ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-win.exe LICENSE.md README.md
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
           name: win-archive
-          path: ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}.zip
+          path: ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}-preview.zip
 
   create-linux-archive:
     name: Create linux archive
@@ -115,13 +116,13 @@ jobs:
       - name: Create archive
         uses: montudor/action-zip@v1
         with:
-          args: zip -j ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}.zip ./build/${{ steps.name.outputs.prop }}-linux LICENSE.md README.md
+          args: zip -j ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-linux LICENSE.md README.md
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
           name: linux-archive
-          path: ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}.zip
+          path: ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}-preview.zip
 
   create-macos-archive:
     name: Create macOS archive
@@ -156,13 +157,13 @@ jobs:
       - name: Create archive
         uses: montudor/action-zip@v1
         with:
-          args: zip -j ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}.zip ./build/${{ steps.name.outputs.prop }}-macos LICENSE.md README.md
+          args: zip -j ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-macos LICENSE.md README.md
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
           name: macos-archive
-          path: ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}.zip
+          path: ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}-preview.zip
 
   upload-pre-release:
     name: Upload Pre-release
@@ -207,11 +208,11 @@ jobs:
           name: macos-archive
           path: ./archives/
         
-      - name: Upload Release
+      - name: Upload Pre-release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ github.token }}
-          automatic_release_tag: v${{ steps.version.outputs.prop }}
-          prerelease: false
-          title: ${{ steps.name.outputs.prop }} v${{ steps.version.outputs.prop }}
+          automatic_release_tag: nightly
+          prerelease: true
+          title: ${{ steps.name.outputs.prop }} v${{ steps.version.outputs.prop }} preview
           files: ./archives/*
