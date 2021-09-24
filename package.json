@@ -4,6 +4,10 @@
   "description": "Scream & Death bot for EntropyZeroOfficial Twitch.tv channel",
   "main": "app.js",
   "repository": "github:GGLinnk/DED_BOT",
+  "scripts": {
+    "start": "node app.js",
+    "build": "pkg ."
+  },
   "keywords": [
     "bot",
     "twitch",
