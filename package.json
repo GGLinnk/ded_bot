@@ -7,7 +7,7 @@
   "repository": "github:GGLinnk/DED_BOT",
   "scripts": {
     "start": "node app.js",
-    "build": "pkg . --out-path ./build/ -t node16-linux,node16-linux,node16-win"
+    "build": "pkg . --out-path ./build/ -t node16-linux,node16-macos,node16-win"
   },
   "keywords": [
     "bot",
