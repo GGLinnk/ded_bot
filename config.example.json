@@ -1,0 +1,11 @@
+{
+  "twitch_cred": {
+    "client_id": "",
+    "client_secret": "",
+    "client_name": "DED_BOT"
+  },
+  "twitch_channel": {
+    "id": "",
+    "name": "EntropyZeroOfficial"
+  }
+}

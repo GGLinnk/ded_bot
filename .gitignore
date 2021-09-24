@@ -5,5 +5,5 @@ node_modules/
 build/
 
 ## Files
-.env
-ded_bot-*
+config.json
+build/ded_bot-*
