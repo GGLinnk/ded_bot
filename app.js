@@ -1,8 +1,8 @@
-const defaultConfig = require('./config.example.json');
-const package = require('./package.json');
-const commander = require('commander');
-const chalk = require('chalk');
-const fs = require('fs');
+import defaultConfig from './config.example.json';
+import packageConfig from './package.json';
+import commander from 'commander';
+import chalk from 'chalk';
+import fs from 'fs';
 
 let debugMode = false;
 let sensitiveMode = false;
@@ -39,7 +39,7 @@ function checkFS(filePath, exitOnMissing = false) {
   if (filePath) {
     try {
       if (fs.existsSync(filePath)) {
-        if (debugMode) console.log(chalk.cyan("[DEBUG]"), "The config file (", chalk.green(filePath) ,") exists!")
+        if (debugMode) console.log(chalk.cyan("[DEBUG]"), "The config file (", chalk.green(filePath), ") exists!");
         return filePath;
       } else if (exitOnMissing) {
         console.error(chalk.red("[ERROR]"), "File is missing (", chalk.green(filePath), ")");
@@ -87,9 +87,9 @@ function checkConfigData(configData) {
 
 const program = new commander.Command();
 
-program.name(package.name);
-program.description(package.description);
-program.version(package.version);
+program.name(packageConfig.name);
+program.description(packageConfig.description);
+program.version(packageConfig.version);
 program
   .option('-d, --debug', 'Enable debug mode')
   .option('-s, --sensitive', 'Enable display of sensitive data')
@@ -104,11 +104,11 @@ sensitiveMode = options.sensitive;
 let configPath = checkFS(options.configPath, true) || "config.json";
 if (debugMode) console.log(chalk.cyan("[DEBUG]"), "Config file path:", chalk.green(configPath));
 if (!checkFS(configPath)) generateConfigFile(configPath, defaultConfig);
-let rawConfigData = getRawData(configPath);
-let configData = parseJSONData(rawConfigData);
+let rawProgramConfig = getRawData(configPath);
+let programConfig = parseJSONData(rawProgramConfig);
 
-checkConfigData(configData);
+checkConfigData(programConfig);
 let commonStr = chalk.cyan("[DEBUG]") + " Config file data:";
 if (debugMode)
-  if (sensitiveMode) console.log(commonStr + "\n%o", configData);
+  if (sensitiveMode) console.log(commonStr + "\n%o", programConfig);
   else console.log(commonStr, chalk.red("You should use -s to allow sensitive data to be displayed!"));

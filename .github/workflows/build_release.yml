@@ -6,31 +6,36 @@ on:
       - v*
 
 jobs:
-  build:
+  build_matrix:
     name: Setup Node.js & Build
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+        include:
+          - os: windows
+            build: npx caxa --input . --output build/ded_bot-win.exe -- "{{caxa}}/node_modules/.bin/node" "--experimental-json-modules" "{{caxa}}/bin/server.js"
+          - os: macos
+            build: npx caxa --input . --output build/ded_bot-macos -- "{{caxa}}/node_modules/.bin/node" "--experimental-json-modules" "{{caxa}}/bin/server.js"
+          - os: ubuntu
+            build: npx caxa --input . --output build/ded_bot-linux -- "{{caxa}}/node_modules/.bin/node" "--experimental-json-modules" "{{caxa}}/bin/server.js"
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2.4.0
+        uses: actions/setup-node@v2
         with:
-          node-version: '16'
-          cache: npm
+          node-version: 16
 
-      - name: Build preview
-        run: |
-          npm install -g pkg
-          npm install
-          npm run build
+      - run: npm ci
+      - run: ${{ matrix.build }}
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v2
         with:
           name: package
           path: package.json
-      
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -44,7 +49,7 @@ jobs:
   create-win-archive:
     name: Create windows archive
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build_matrix]
 
     steps:
       - name: Download package artifact
@@ -85,7 +90,7 @@ jobs:
   create-linux-archive:
     name: Create linux archive
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build_matrix]
 
     steps:
       - name: Download package artifact
@@ -126,7 +131,7 @@ jobs:
   create-macos-archive:
     name: Create macOS archive
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build_matrix]
 
     steps:
       - name: Download package artifact

@@ -4,10 +4,12 @@
   "description": "Scream & Death counter bot for EntropyZeroOfficial Twitch.tv channel",
   "main": "app.js",
   "bin": "app.js",
+  "type": "module",
   "repository": "github:GGLinnk/DED_BOT",
   "scripts": {
-    "start": "node app.js",
-    "build": "pkg . --out-path ./build/ -t node16-linux,node16-macos,node16-win"
+    "start": "node --experimental-json-modules app.js",
+    "debug": "node --experimental-json-modules app.js -d",
+    "build-win": "npx caxa --input . --output build/ded_bot-win.exe -- \"{{caxa}}/node_modules/.bin/node\" \"--experimental-json-modules\" \"{{caxa}}/app.js\""
   },
   "keywords": [
     "bot",
@@ -30,5 +32,8 @@
     "@twurple/chat": "^5.0.4",
     "chalk": "^4.1.2",
     "commander": "^8.2.0"
+  },
+  "devDependencies": {
+    "caxa": "^2.1.0"
   }
 }
