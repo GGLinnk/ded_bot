@@ -31,12 +31,6 @@ jobs:
       - run: npm ci
       - run: ${{ matrix.build }}
 
-      - name: Upload package artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: package.json
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -47,21 +41,22 @@ jobs:
             README.md
             LICENSE.md
 
-  create-win-archive:
-    name: Create windows archive
-    runs-on: ubuntu-latest
+  create-archive:
+    name: Create archives
     needs: [build_matrix]
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Download package artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: package
-
       - name: Download executables
         uses: actions/download-artifact@v2
         with:
           name: build
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: package.json
   
       - name: Extract project version
         id: version
@@ -77,109 +72,45 @@ jobs:
           path: 'package.json'
           prop_path: 'name'
 
-      - name: Create archive
+      - run: mkdir ./archives/
+
+      - name: Create windows archive
         uses: montudor/action-zip@v1
         with:
-          args: zip -j ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-win.exe LICENSE.md README.md
+          args: zip -j ./archives/${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-win.exe LICENSE.md README.md
+
+      - name: Create macos archive
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -j ./archives/${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-macos.exe LICENSE.md README.md
+
+      - name: Create linux archive
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -j ./archives/${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-linux.exe LICENSE.md README.md
 
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
-          name: win-archive
-          path: ${{ steps.name.outputs.prop }}-win-${{ steps.version.outputs.prop }}-preview.zip
-
-  create-linux-archive:
-    name: Create linux archive
-    runs-on: ubuntu-latest
-    needs: [build_matrix]
-
-    steps:
-      - name: Download package artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: package
-
-      - name: Download executables
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-  
-      - name: Extract project version
-        id: version
-        uses: notiz-dev/github-action-json-property@release
-        with: 
-          path: 'package.json'
-          prop_path: 'version'
-
-      - name: Extract project name
-        id: name
-        uses: notiz-dev/github-action-json-property@release
-        with: 
-          path: 'package.json'
-          prop_path: 'name'
-
-      - name: Create archive
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -j ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-linux LICENSE.md README.md
-
-      - name: Upload archive
-        uses: actions/upload-artifact@v2
-        with:
-          name: linux-archive
-          path: ${{ steps.name.outputs.prop }}-linux-${{ steps.version.outputs.prop }}-preview.zip
-
-  create-macos-archive:
-    name: Create macOS archive
-    runs-on: ubuntu-latest
-    needs: [build_matrix]
-
-    steps:
-      - name: Download package artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: package
-
-      - name: Download executables
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-  
-      - name: Extract project version
-        id: version
-        uses: notiz-dev/github-action-json-property@release
-        with: 
-          path: 'package.json'
-          prop_path: 'version'
-
-      - name: Extract project name
-        id: name
-        uses: notiz-dev/github-action-json-property@release
-        with: 
-          path: 'package.json'
-          prop_path: 'name'
-
-      - name: Create archive
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -j ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}-preview.zip ./build/${{ steps.name.outputs.prop }}-macos LICENSE.md README.md
-
-      - name: Upload archive
-        uses: actions/upload-artifact@v2
-        with:
-          name: macos-archive
-          path: ${{ steps.name.outputs.prop }}-macos-${{ steps.version.outputs.prop }}-preview.zip
+          name: archive
+          path: ./archives/*
 
   upload-pre-release:
     name: Upload Pre-release
     runs-on: ubuntu-latest
-    needs: [create-linux-archive, create-win-archive, create-macos-archive]
+    needs: [create-archive]
 
     steps:
       - name: Download package artifact
         uses: actions/download-artifact@v2
         with:
           name: package
+
+      - name: Get archive
+        uses: actions/download-artifact@v2
+        with:
+          name: archive
+          path: ./archives/
 
       - name: Extract project version
         id: version
@@ -195,24 +126,6 @@ jobs:
           path: 'package.json'
           prop_path: 'name'
 
-      - name: Get windows archive
-        uses: actions/download-artifact@v2
-        with:
-          name: win-archive
-          path: ./archives/
-
-      - name: Get linux archive
-        uses: actions/download-artifact@v2
-        with:
-          name: linux-archive
-          path: ./archives/
-
-      - name: Get macOS archive
-        uses: actions/download-artifact@v2
-        with:
-          name: macos-archive
-          path: ./archives/
-        
       - name: Upload Pre-release
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
