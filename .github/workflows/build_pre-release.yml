@@ -212,7 +212,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ github.token }}
-          automatic_release_tag: nightly
+          automatic_release_tag: nightly-v${{ steps.version.outputs.prop }}
           prerelease: true
           title: ${{ steps.name.outputs.prop }} v${{ steps.version.outputs.prop }} preview
           files: ./archives/*
